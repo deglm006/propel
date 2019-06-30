@@ -409,7 +409,7 @@
         (zero? (:total-error (first evaluated-pop))) (println "SUCCESS")
         (>= generation max-generations) nil
         :else (recur (inc generation)
-                     (repeatedly population-size 
+                     (repeatedly population-size
                                  #(new-individual evaluated-pop argmap)))))))
 
 ;;;;;;;;;
@@ -430,7 +430,7 @@
      3))
 
 (defn regression-error-function
-  "Finds the behaviors and errors of the individual."
+  "Finds the behaviors and errors of an individual: Error is the absolute deviation between the target output value and the program's selected behavior, or 1000000 if no behavior is produced. The behavior is here defined as the final top item on the :integer stack."
   [argmap individual]
   (let [program (push-from-plushy (:plushy individual))
         inputs (range -10 11)
@@ -458,7 +458,7 @@
 ;; String classification
 
 (defn string-classification-error-function
-  "Finds the behaviors and errors of the individual."
+  "Finds the behaviors and errors of an individual: Error is 0 if the value and the program's selected behavior match, or 1 if they differ, or 1000000 if no behavior is produced. The behavior is here defined as the final top item on the :boolean stack."
   [argmap individual]
   (let [program (push-from-plushy (:plushy individual))
         inputs ["GCG" "GACAG" "AGAAG" "CCCA" "GATTACA" "TAGG" "GACT"]
@@ -500,4 +500,3 @@
                                         (map read-string args)))
                           [:error-function]
                           #(if (fn? %) % (eval %))))))
-
