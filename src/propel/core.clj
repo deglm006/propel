@@ -322,12 +322,40 @@
                        survivors)
                (rest cases))))))
 
+
+(defn new-lexicase-selection
+  "Selects an individual from the population using lexicase selection."
+  [pop argmap]
+  (loop [survivors pop
+         cases (partition 2 (shuffle (range (count (:errors (first pop))))))]
+    (if (or (empty? cases)
+            (empty? (rest survivors)))
+      (rand-nth survivors)
+
+      (let [min-err-for-case (apply min (map + (map #(nth % (first (first cases)))
+                                                    (map :errors survivors))
+                                               (map #(nth % (last (first cases)))
+                                                    (map :errors survivors))))]
+        (recur (filter #(= (+
+                            (nth (:errors %) (first (first cases)))
+                            (nth (:errors %) (last (first cases)))
+                            ) min-err-for-case)
+                       survivors)
+               (rest cases)
+          )
+        )
+      )
+    )
+)
+
+
 (defn select-parent
   "Selects a parent from the population using the specified method."
   [pop argmap]
   (case (:parent-selection argmap)
     :tournament (tournament-selection pop argmap)
-    :lexicase (lexicase-selection pop argmap)))
+    :lexicase (lexicase-selection pop argmap)
+    :new-lexicase (new-lexicase-selection pop argmap)))
 
 (defn crossover
   "Crosses over two individuals using uniform crossover. Pads shorter one."
@@ -402,7 +430,7 @@
                                 (make-random-plushy instructions
                                                     max-initial-plushy-size)))]
     (let [evaluated-pop (sort-by :total-error
-                                 (map (partial error-function argmap)
+                                 (pmap (partial error-function argmap)
                                       population))]
       (report evaluated-pop generation)
       (cond
@@ -434,7 +462,7 @@
   [argmap individual]
   (let [program (push-from-plushy (:plushy individual))
         inputs (range -10 11)
-        correct-outputs (map target-function inputs)
+        correct-outputs (map target-function-hard inputs)
         outputs (map (fn [input]
                        (peek-stack
                         (interpret-program
@@ -499,4 +527,5 @@
                                  (apply hash-map
                                         (map read-string args)))
                           [:error-function]
-                          #(if (fn? %) % (eval %))))))
+                          #(if (fn? %) % (eval %))))
+    (shutdown-agents)))
