@@ -310,43 +310,41 @@
 
 (defn lexicase-selection
   "Selects an individual from the population using lexicase selection."
-  [pop argmap]
+  ([pop argmap] (lexicase-selection pop argmap :errors))
+  ([pop argmap errors]
   (loop [survivors pop
-         cases (shuffle (range (count (:errors (first pop)))))]
+         cases (shuffle (range (count (errors (first pop)))))]
     (if (or (empty? cases)
             (empty? (rest survivors)))
       (rand-nth survivors)
       (let [min-err-for-case (apply min (map #(nth % (first cases))
-                                             (map :errors survivors)))]
-        (recur (filter #(= (nth (:errors %) (first cases)) min-err-for-case)
+                                             (map errors survivors)))]
+        (recur (filter #(= (nth (errors %) (first cases)) min-err-for-case)
                        survivors)
-               (rest cases))))))
+               (rest cases)))))))
 
+(defn sum-error-cases
+  [individual case-group]
+  (reduce +
+          (map #(nth (:errors individual) % 0) case-group))
+  )
 
-(defn new-lexicase-selection
+(defn grouped-errors
+  [cases individual]
+  (map (partial sum-error-cases individual) cases))
+
+(defn add-grouped-errors
+  "Sums the errors in each partition of case numbers in cases, and assoc's
+   that new error vector into each individual in the given population."
+  [cases individual]
+  (assoc individual :grouped-errors (grouped-errors cases individual))
+  )
+
+(defn summed-partition-lexicase-selection
   "Selects an individual from the population using lexicase selection."
-  [pop argmap]
-  (loop [survivors pop
-         cases (partition 2 (shuffle (range (count (:errors (first pop))))))]
-    (if (or (empty? cases)
-            (empty? (rest survivors)))
-      (rand-nth survivors)
-
-      (let [min-err-for-case (apply min (map + (map #(nth % (first (first cases)))
-                                                    (map :errors survivors))
-                                               (map #(nth % (last (first cases)))
-                                                    (map :errors survivors))))]
-        (recur (filter #(= (+
-                            (nth (:errors %) (first (first cases)))
-                            (nth (:errors %) (last (first cases)))
-                            ) min-err-for-case)
-                       survivors)
-               (rest cases)
-          )
-        )
-      )
-    )
-)
+  [pop {k :k :as argmap}]
+  (let [cases (partition k (shuffle (range (count (:errors (first pop))))))]
+    (lexicase-selection (map (partial add-grouped-errors cases) pop) argmap :grouped-errors)))
 
 
 (defn select-parent
@@ -355,7 +353,8 @@
   (case (:parent-selection argmap)
     :tournament (tournament-selection pop argmap)
     :lexicase (lexicase-selection pop argmap)
-    :new-lexicase (new-lexicase-selection pop argmap)))
+    :summed (summed-partition-lexicase-selection pop argmap)
+))
 
 (defn crossover
   "Crosses over two individuals using uniform crossover. Pads shorter one."
