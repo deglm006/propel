@@ -367,12 +367,18 @@
   (assoc individual :grouped-errors (grouped-errors cases individual))
   )
 
+;right now drops extra that overfill
 (defn summed-partition-lexicase-selection
   "Selects an individual from the population using lexicase selection."
-  [pop {k :k :as argmap}]
-  (let [cases (partition k (shuffle (range (count (:errors (first pop))))))]
+  [pop {partition-size :partition-size :as argmap}]
+  (let [cases (partition partition-size (shuffle (range (count (:errors (first pop))))))]
     (lexicase-selection (map (partial add-grouped-errors cases) pop) argmap :grouped-errors)))
 
+(defn summed-partition-lexicase-selection-no-dropping
+  "Selects an individual from the population using lexicase selection."
+  [pop {partition-size :partition-size :as argmap}]
+  (let [cases (partition partition-size partition-size nil (shuffle (range (count (:errors (first pop))))))]
+    (lexicase-selection (map (partial add-grouped-errors cases) pop) argmap :grouped-errors)))
 
 (defn select-parent
   "Selects a parent from the population using the specified method."
@@ -381,6 +387,7 @@
     :tournament (tournament-selection pop argmap)
     :lexicase (lexicase-selection pop argmap)
     :summed (summed-partition-lexicase-selection pop argmap)
+    :sum-no-drop (summed-partition-lexicase-selection-no-dropping pop argmap)
     :subsample (down-sampled-lexicase-selection pop argmap)
 ))
 
