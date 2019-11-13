@@ -336,6 +336,20 @@
                        survivors)
                (rest cases)))))))
 
+(defn down-sampled-lexicase-selection
+  "Selects an individual from the population using lexicase selection."
+  [pop {sample-size :sample-size :as argmap}]
+  (loop [survivors pop
+         cases (take sample-size (shuffle (range (count (:errors (first pop))))))]
+    (if (or (empty? cases)
+            (empty? (rest survivors)))
+      (rand-nth survivors)
+      (let [min-err-for-case (apply min (map #(nth % (first cases))
+                                             (map :errors survivors)))]
+        (recur (filter #(= (nth (:errors %) (first cases)) min-err-for-case)
+                       survivors)
+               (rest cases))))))
+
 (defn sum-error-cases
   [individual case-group]
   (reduce +
@@ -367,6 +381,7 @@
     :tournament (tournament-selection pop argmap)
     :lexicase (lexicase-selection pop argmap)
     :summed (summed-partition-lexicase-selection pop argmap)
+    :subsample (down-sampled-lexicase-selection pop argmap)
 ))
 
 (defn crossover
