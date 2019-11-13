@@ -43,6 +43,19 @@
    "G"
    "T"))
 
+(def int-instructions
+  (list
+   'in1
+   'integer_+
+   'integer_-
+   'integer_*
+   'integer_%
+   'integer_=
+   'exec_dup
+   'close
+   0
+   1))
+
 (def opens ; number of blocks opened by instructions (default = 0)
   {'exec_dup 1
    'exec_if 2})
