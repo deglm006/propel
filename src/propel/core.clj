@@ -56,6 +56,22 @@
    0
    1))
 
+(def term-instructions
+  (list
+   'term_pop
+   'int_to_term
+   'in1
+   'integer_+
+   'integer_-
+   'integer_*
+   'integer_%
+   ;'integer_=
+   'exec_dup
+   'close
+   0
+   1
+   ))
+
 (def opens ; number of blocks opened by instructions (default = 0)
   {'exec_dup 1
    'exec_if 2})
@@ -68,6 +84,7 @@
    :integer '()
    :string '()
    :boolean '()
+   :term '()
    :input {}})
 
 (defn abs
@@ -139,6 +156,25 @@
 
 ;;;;;;;;;
 ;; Instructions
+
+(defn term_pop
+  [state]
+  (let [args-pop-result (get-args-from-stacks state [:term])]
+    (if (= args-pop-result :not-enough-args)
+      state
+      (let [first (first (first (:args args-pop-result)))
+            last (last (last (:args args-pop-result)))
+            new-state (:state args-pop-result)]
+        ; (println "--------------------------------------------")
+        ; (println "pop-res: "(:args args-pop-result))
+        ; (println "first:" first)
+        ; (println "last:" last)
+        (push-to-stack (push-to-stack new-state :integer last) :integer first))))
+  )
+
+(defn int_to_term
+  [state]
+  (make-push-instruction state vector [:integer :integer] :term))
 
 (defn in1
   "Pushes the input labeled :in1 on the inputs map onto the :exec stack."
@@ -251,6 +287,10 @@
         first-instruction (if (symbol? first-raw)
                             (eval first-raw)
                             first-raw)]
+    ; (println "first-instruction")
+    ; (println first-instruction)
+    ; (println "state")
+    ; (println state)
     (cond
       (fn? first-instruction)
       (first-instruction popped-state)
@@ -263,6 +303,10 @@
       ;
       (seq? first-instruction)
       (update popped-state :exec #(concat %2 %1) first-instruction)
+      ;
+      (vector? first-instruction)
+      ;(update popped-state :term #(concat %2 %1) first-instruction)
+      (push-to-stack popped-state :term first-instruction)
       ;
       (or (= first-instruction true) (= first-instruction false))
       (push-to-stack popped-state :boolean first-instruction)
@@ -491,11 +535,65 @@
      x
      3))
 
+(defn term-deriv
+  [[x y]]
+  [(* x y) (dec y)]
+  )
+
+(def deriv-inputs
+  (for [x (range -10 11) y (range 0 5)] [x y]))
+
+(defn deriv-error-function
+  [argmap individual]
+  (let [program (push-from-plushy (:plushy individual))
+        inputs deriv-inputs
+        correct-outputs (map term-deriv inputs)
+        outputs (map (fn [input]
+                       (peek-stack
+                        (interpret-program
+                         program
+                         (assoc empty-push-state :input {:in1 input})
+                         (:step-limit argmap))
+                        :term))
+                     inputs)
+        errors (map (fn [correct-output output]
+          ; (println "output")
+          ; (println output)
+          ; (println "correct-output")
+          ; (println correct-output)
+
+                            (if (= output :no-stack-item)
+                              1000000
+                              (+ (abs (- (first correct-output) (first output)))
+                                 (abs (- (last correct-output) (last output))))
+                              )
+
+                      )
+                    correct-outputs
+                    outputs)]
+    ; (println "individual")
+    ; (println individual)
+    ; (println "program")
+    ; (println program)
+    ; (println "inputs")
+    ; (println inputs)
+    ; (println "outputs")
+    ; (println outputs)
+    ; (println "correct-outputs")
+    ; (println correct-outputs)
+    ; (println "errors")
+    ; (println errors)
+    (assoc individual
+           :behaviors outputs
+           :errors errors
+           :total-error (apply +' errors))))
+
 (defn regression-error-function
   "Finds the behaviors and errors of an individual: Error is the absolute deviation between the target output value and the program's selected behavior, or 1000000 if no behavior is produced. The behavior is here defined as the final top item on the :integer stack."
   [argmap individual]
   (let [program (push-from-plushy (:plushy individual))
         inputs (range -10 11)
+        ;inputs (take sample-size (shuffle (inputs))
         correct-outputs (map target-function-hard inputs)
         outputs (map (fn [input]
                        (peek-stack
@@ -550,13 +648,13 @@
   "Runs propel-gp, giving it a map of arguments."
   [& args]
   (binding [*ns* (the-ns 'propel.core)]
-    (propel-gp (update-in (merge {:instructions default-instructions
-                                  :error-function regression-error-function
+    (propel-gp (update-in (merge {:instructions term-instructions
+                                  :error-function deriv-error-function
                                   :max-generations 500
                                   :population-size 200
                                   :max-initial-plushy-size 50
                                   :step-limit 100
-                                  :parent-selection :tournament
+                                  :parent-selection :lexicase
                                   :tournament-size 5}
                                  (apply hash-map
                                         (map read-string args)))
