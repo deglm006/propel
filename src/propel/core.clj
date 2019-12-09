@@ -508,7 +508,7 @@
                                 (make-random-plushy instructions
                                                     max-initial-plushy-size)))]
     (let [evaluated-pop (sort-by :total-error
-                                 (pmap (partial error-function argmap)
+                                 (pmap (partial error-function argmap);pmap
                                       population))]
       (report evaluated-pop generation)
       (cond
@@ -541,7 +541,7 @@
   )
 
 (def deriv-inputs
-  (for [x (range -10 11) y (range 0 5)] [x y]))
+  (for [x (range -4 4) y (range -2 4)] [x y]))
 
 (defn deriv-error-function
   [argmap individual]
@@ -556,37 +556,47 @@
                          (:step-limit argmap))
                         :term))
                      inputs)
-        errors (map (fn [correct-output output]
-          ; (println "output")
-          ; (println output)
-          ; (println "correct-output")
-          ; (println correct-output)
-
+        errors1 (map (fn [correct-output output]
                             (if (= output :no-stack-item)
                               1000000
-                              (+ (abs (- (first correct-output) (first output)))
-                                 (abs (- (last correct-output) (last output))))
+                              (+
+                               (if (zero? (inc (last correct-output)))
+                                 (if (zero? (first output))
+                                      0
+                                      1000
+                                   )
+                                   (if (zero? (mod (first output) (inc (last correct-output))))
+                                      0
+                                      1000
+                                   ))
+                              (abs (- (first correct-output) (first output))))
                               )
-
                       )
                     correct-outputs
-                    outputs)]
-    ; (println "individual")
-    ; (println individual)
-    ; (println "program")
-    ; (println program)
-    ; (println "inputs")
-    ; (println inputs)
-    ; (println "outputs")
-    ; (println outputs)
-    ; (println "correct-outputs")
-    ; (println correct-outputs)
-    ; (println "errors")
-    ; (println errors)
+                    outputs)
+        errors2 (map (fn [correct-output output]
+                            (if (= output :no-stack-item)
+                              1000000
+
+                                 ; (if (< (last output) (last correct-output))
+                                   (abs (- (last correct-output) (last output)))
+                                   ; (* 1 (abs (- (last correct-output) (last output))))
+                                   ; )
+                                 ))
+                    correct-outputs
+                    outputs)
+        errors (concat errors1 errors2)
+
+        ]
     (assoc individual
            :behaviors outputs
            :errors errors
            :total-error (apply +' errors))))
+
+;program to solve with a single term
+;(integer_+ in1 1 1 1 term_pop term_pop 1 int_to_term integer_- 1 integer_% integer_+ integer_- 0 integer_+ term_pop int_to_term 1 in1 integer_% integer_+ term_pop int_to_term term_pop term_pop integer_% integer_% int_to_term in1 in1 in1 integer_% exec_dup (in1) integer_* integer_+ integer_* integer_- int_to_term term_pop integer_* int_to_term integer_* 1 term_pop int_to_term integer_+ integer_+)
+;77 generations, 200 population, lexicase selection
+
 
 (defn regression-error-function
   "Finds the behaviors and errors of an individual: Error is the absolute deviation between the target output value and the program's selected behavior, or 1000000 if no behavior is produced. The behavior is here defined as the final top item on the :integer stack."
