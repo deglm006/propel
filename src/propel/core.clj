@@ -562,6 +562,32 @@
 (def deriv-inputs
   (for [x (range -4 4) y (range -2 4)] [x y]))
 
+
+(def deriv-inputs-poly
+  ([[0 0]]
+   [[1 0]]
+   [[1 1]]
+   [[1 2]]
+   [[3 5]]
+   [[1 1][1 2]]
+   [[1 0][1 1][1 2]]
+   )
+  )
+
+(def deriv-outputs-poly value
+  ([[0 -1]]
+   [[0 -1]]
+   [[1 0]]
+   [[2 1]]
+   [[15 4]]
+   [[1 0][2 1]]
+   [[0 -1][1 0][2 1]]
+   )
+
+  )
+
+
+;single term
 (defn deriv-error-function
   [argmap individual]
   (let [program (push-from-plushy (:plushy individual))
