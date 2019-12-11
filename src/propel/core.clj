@@ -65,6 +65,8 @@
    'integer_-
    'integer_*
    'integer_%
+   'poly_pop
+   'term_add_to_poly
    ;'integer_=
    'exec_dup
    'close
@@ -85,6 +87,7 @@
    :string '()
    :boolean '()
    :term '()
+   :poly '()
    :input {}})
 
 (defn abs
@@ -156,6 +159,20 @@
 
 ;;;;;;;;;
 ;; Instructions
+
+(defn poly_pop
+  [state]
+  (let [args-pop-result (get-args-from-stacks state [:poly])]
+    (if (= args-pop-result :not-enough-args)
+      state
+        (let [res (first (:args args-pop-result))
+               new-state (:state args-pop-result)]
+          (reduce #(push-to-stack %1 :term %2) new-state res)))))
+
+(defn term_add_to_poly
+  [state]
+  (make-push-instruction state conj [:poly :term] :poly)
+  )
 
 (defn term_pop
   [state]
@@ -305,8 +322,10 @@
       (update popped-state :exec #(concat %2 %1) first-instruction)
       ;
       (vector? first-instruction)
-      ;(update popped-state :term #(concat %2 %1) first-instruction)
-      (push-to-stack popped-state :term first-instruction)
+      (if (vector? (first first-instruction))
+        (push-to-stack popped-state :poly first-instruction)
+        (push-to-stack popped-state :term first-instruction)
+        )
       ;
       (or (= first-instruction true) (= first-instruction false))
       (push-to-stack popped-state :boolean first-instruction)
