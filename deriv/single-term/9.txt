@@ -1,0 +1,56 @@
+Starting GP with args: {:instructions (term_pop int_to_term in1 integer_+ integer_- integer_* integer_% exec_dup close 0 1), :error-function #object[propel.core$deriv_error_function 0x4bbf6d0e propel.core$deriv_error_function@4bbf6d0e], :max-generations 500, :population-size 200, :max-initial-plushy-size 50, :step-limit 100, :parent-selection :lexicase, :tournament-size 5}
+-------------------------------------------------------
+               Report for Generation 0
+-------------------------------------------------------
+Best plushy: (integer_+ exec_dup integer_+ integer_% integer_+ integer_+ int_to_term int_to_term int_to_term exec_dup close 1 integer_- integer_- term_pop term_pop int_to_term integer_- in1 1 term_pop integer_% 1 term_pop in1 term_pop integer_* int_to_term)
+Best program: (integer_+ exec_dup (integer_+ integer_% integer_+ integer_+ int_to_term int_to_term int_to_term exec_dup () 1 integer_- integer_- term_pop term_pop int_to_term integer_- in1 1 term_pop integer_% 1 term_pop in1 term_pop integer_* int_to_term))
+Best total error: 172
+Best errors: (0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 11 6 1 4 9 14 9 5 1 3 7 11 7 4 1 2 5 8 5 3 1 1 3 5 3 2 1 0 1 2 1 1 1 1 1 1 1 0 1 2 3 4 3 1 1 3 5 7)
+Best behaviors: ([8 8] [4 4] [0 0] [-4 -4] [-8 -8] [-12 -12] [6 6] [3 3] [0 0] [-3 -3] [-6 -6] [-9 -9] [4 4] [2 2] [0 0] [-2 -2] [-4 -4] [-6 -6] [2 2] [1 1] [0 0] [-1 -1] [-2 -2] [-3 -3] [0 0] [0 0] [0 0] [0 0] [0 0] [0 0] [-2 -2] [-1 -1] [0 0] [1 1] [2 2] [3 3] [-4 -4] [-2 -2] [0 0] [2 2] [4 4] [6 6] [-6 -6] [-3 -3] [0 0] [3 3] [6 6] [9 9])
+
+-------------------------------------------------------
+               Report for Generation 1
+-------------------------------------------------------
+Best plushy: (integer_+ exec_dup integer_+ integer_% integer_+ integer_+ int_to_term int_to_term int_to_term exec_dup close 1 integer_- integer_- integer_- term_pop integer_% term_pop 1 int_to_term integer_- in1 1 term_pop integer_% 1 term_pop in1 term_pop integer_* int_to_term)
+Best program: (integer_+ exec_dup (integer_+ integer_% integer_+ integer_+ int_to_term int_to_term int_to_term exec_dup () 1 integer_- integer_- integer_- term_pop integer_% term_pop 1 int_to_term integer_- in1 1 term_pop integer_% 1 term_pop in1 term_pop integer_* int_to_term))
+Best total error: 172
+Best errors: (0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 11 6 1 4 9 14 9 5 1 3 7 11 7 4 1 2 5 8 5 3 1 1 3 5 3 2 1 0 1 2 1 1 1 1 1 1 1 0 1 2 3 4 3 1 1 3 5 7)
+Best behaviors: ([8 8] [4 4] [0 0] [-4 -4] [-8 -8] [-12 -12] [6 6] [3 3] [0 0] [-3 -3] [-6 -6] [-9 -9] [4 4] [2 2] [0 0] [-2 -2] [-4 -4] [-6 -6] [2 2] [1 1] [0 0] [-1 -1] [-2 -2] [-3 -3] [0 0] [0 0] [0 0] [0 0] [0 0] [0 0] [-2 -2] [-1 -1] [0 0] [1 1] [2 2] [3 3] [-4 -4] [-2 -2] [0 0] [2 2] [4 4] [6 6] [-6 -6] [-3 -3] [0 0] [3 3] [6 6] [9 9])
+
+-------------------------------------------------------
+               Report for Generation 2
+-------------------------------------------------------
+Best plushy: (int_to_term exec_dup integer_+ integer_% integer_+ in1 integer_- integer_+ int_to_term 1 in1 1 integer_+ integer_- in1 term_pop int_to_term term_pop in1 integer_- term_pop int_to_term integer_* term_pop in1 term_pop integer_* int_to_term integer_+ int_to_term integer_- close term_pop int_to_term)
+Best program: (int_to_term exec_dup (integer_+ integer_% integer_+ in1 integer_- integer_+ int_to_term 1 in1 1 integer_+ integer_- in1 term_pop int_to_term term_pop in1 integer_- term_pop int_to_term integer_* term_pop in1 term_pop integer_* int_to_term integer_+ int_to_term integer_-) term_pop int_to_term)
+Best total error: 48
+Best errors: (0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1)
+Best behaviors: ([8 -2] [4 -1] [0 0] [-4 1] [-8 2] [-12 3] [6 -2] [3 -1] [0 0] [-3 1] [-6 2] [-9 3] [4 -2] [2 -1] [0 0] [-2 1] [-4 2] [-6 3] [2 -2] [1 -1] [0 0] [-1 1] [-2 2] [-3 3] [0 -2] [0 -1] [0 0] [0 1] [0 2] [0 3] [-2 -2] [-1 -1] [0 0] [1 1] [2 2] [3 3] [-4 -2] [-2 -1] [0 0] [2 1] [4 2] [6 3] [-6 -2] [-3 -1] [0 0] [3 1] [6 2] [9 3])
+
+-------------------------------------------------------
+               Report for Generation 3
+-------------------------------------------------------
+Best plushy: (int_to_term exec_dup integer_+ integer_% integer_+ in1 integer_- integer_* integer_+ int_to_term 1 in1 1 integer_+ integer_- in1 term_pop int_to_term integer_+ term_pop in1 integer_- term_pop int_to_term integer_* term_pop in1 term_pop integer_* int_to_term integer_+ int_to_term integer_- integer_+ close term_pop int_to_term)
+Best program: (int_to_term exec_dup (integer_+ integer_% integer_+ in1 integer_- integer_* integer_+ int_to_term 1 in1 1 integer_+ integer_- in1 term_pop int_to_term integer_+ term_pop in1 integer_- term_pop int_to_term integer_* term_pop in1 term_pop integer_* int_to_term integer_+ int_to_term integer_- integer_+) term_pop int_to_term)
+Best total error: 48
+Best errors: (0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1)
+Best behaviors: ([8 -2] [4 -1] [0 0] [-4 1] [-8 2] [-12 3] [6 -2] [3 -1] [0 0] [-3 1] [-6 2] [-9 3] [4 -2] [2 -1] [0 0] [-2 1] [-4 2] [-6 3] [2 -2] [1 -1] [0 0] [-1 1] [-2 2] [-3 3] [0 -2] [0 -1] [0 0] [0 1] [0 2] [0 3] [-2 -2] [-1 -1] [0 0] [1 1] [2 2] [3 3] [-4 -2] [-2 -1] [0 0] [2 1] [4 2] [6 3] [-6 -2] [-3 -1] [0 0] [3 1] [6 2] [9 3])
+
+-------------------------------------------------------
+               Report for Generation 4
+-------------------------------------------------------
+Best plushy: (int_to_term exec_dup integer_+ integer_% integer_+ in1 integer_- integer_+ int_to_term 1 in1 1 integer_+ integer_- in1 term_pop int_to_term term_pop integer_% in1 in1 integer_- term_pop int_to_term integer_* term_pop in1 term_pop integer_* int_to_term integer_+ int_to_term integer_- close term_pop int_to_term)
+Best program: (int_to_term exec_dup (integer_+ integer_% integer_+ in1 integer_- integer_+ int_to_term 1 in1 1 integer_+ integer_- in1 term_pop int_to_term term_pop integer_% in1 in1 integer_- term_pop int_to_term integer_* term_pop in1 term_pop integer_* int_to_term integer_+ int_to_term integer_-) term_pop int_to_term)
+Best total error: 48
+Best errors: (0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1)
+Best behaviors: ([8 -2] [4 -1] [0 0] [-4 1] [-8 2] [-12 3] [6 -2] [3 -1] [0 0] [-3 1] [-6 2] [-9 3] [4 -2] [2 -1] [0 0] [-2 1] [-4 2] [-6 3] [2 -2] [1 -1] [0 0] [-1 1] [-2 2] [-3 3] [0 -2] [0 -1] [0 0] [0 1] [0 2] [0 3] [-2 -2] [-1 -1] [0 0] [1 1] [2 2] [3 3] [-4 -2] [-2 -1] [0 0] [2 1] [4 2] [6 3] [-6 -2] [-3 -1] [0 0] [3 1] [6 2] [9 3])
+
+-------------------------------------------------------
+               Report for Generation 5
+-------------------------------------------------------
+Best plushy: (int_to_term exec_dup integer_+ term_pop integer_+ in1 integer_+ int_to_term 1 in1 1 integer_+ integer_+ integer_- in1 term_pop int_to_term term_pop in1 1 integer_- int_to_term term_pop int_to_term integer_* term_pop in1 term_pop integer_* int_to_term integer_+ int_to_term integer_- close term_pop int_to_term)
+Best program: (int_to_term exec_dup (integer_+ term_pop integer_+ in1 integer_+ int_to_term 1 in1 1 integer_+ integer_+ integer_- in1 term_pop int_to_term term_pop in1 1 integer_- int_to_term term_pop int_to_term integer_* term_pop in1 term_pop integer_* int_to_term integer_+ int_to_term integer_-) term_pop int_to_term)
+Best total error: 0
+Best errors: (0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+Best behaviors: ([8 -3] [4 -2] [0 -1] [-4 0] [-8 1] [-12 2] [6 -3] [3 -2] [0 -1] [-3 0] [-6 1] [-9 2] [4 -3] [2 -2] [0 -1] [-2 0] [-4 1] [-6 2] [2 -3] [1 -2] [0 -1] [-1 0] [-2 1] [-3 2] [0 -3] [0 -2] [0 -1] [0 0] [0 1] [0 2] [-2 -3] [-1 -2] [0 -1] [1 0] [2 1] [3 2] [-4 -3] [-2 -2] [0 -1] [2 0] [4 1] [6 2] [-6 -3] [-3 -2] [0 -1] [3 0] [6 1] [9 2])
+
+SUCCESS
