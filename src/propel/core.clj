@@ -564,35 +564,36 @@
 
 
 (def deriv-inputs-poly
-  ([[0 0]]
+  [[[0 0]]
    [[1 0]]
    [[1 1]]
    [[1 2]]
    [[3 5]]
    [[1 1][1 2]]
    [[1 0][1 1][1 2]]
-   )
+   ]
   )
 
-(def deriv-outputs-poly value
-  ([[0 -1]]
+(def deriv-outputs-poly
+  [[[0 -1]]
    [[0 -1]]
    [[1 0]]
    [[2 1]]
    [[15 4]]
    [[1 0][2 1]]
    [[0 -1][1 0][2 1]]
-   )
+   ]
 
   )
 
 
 ;single term
 (defn deriv-error-function
-  [argmap individual]
+  ([argmap individual] (deriv-error-function argmap individual deriv-inputs (map term-deriv deriv-inputs)))
+  ([argmap individual in out]
   (let [program (push-from-plushy (:plushy individual))
-        inputs deriv-inputs
-        correct-outputs (map term-deriv inputs)
+        inputs in
+        correct-outputs out
         outputs (map (fn [input]
                        (peek-stack
                         (interpret-program
@@ -636,11 +637,36 @@
     (assoc individual
            :behaviors outputs
            :errors errors
-           :total-error (apply +' errors))))
+           :total-error (apply +' errors)))))
 
 ;program to solve with a single term
 ;(integer_+ in1 1 1 1 term_pop term_pop 1 int_to_term integer_- 1 integer_% integer_+ integer_- 0 integer_+ term_pop int_to_term 1 in1 integer_% integer_+ term_pop int_to_term term_pop term_pop integer_% integer_% int_to_term in1 in1 in1 integer_% exec_dup (in1) integer_* integer_+ integer_* integer_- int_to_term term_pop integer_* int_to_term integer_* 1 term_pop int_to_term integer_+ integer_+)
 ;77 generations, 200 population, lexicase selection
+
+; (defn poly-error-function
+;   [argmap individual]
+;
+;   (reduce
+;    #(reduce
+;      (fn [in1 in2]
+;        (deriv-error-function argmap in1 (deriv-inputs-poly in2) (deriv-outputs-poly in2)))
+;      %1 (range (count (deriv-inputs-poly %2))))
+;    individual (range (count deriv-inputs-poly))
+;    )
+
+
+
+  ; (range (count deriv-inputs-poly))
+  ;
+  ;
+  ;
+  ; (doseq [x (range (count deriv-inputs-poly))]
+  ;   (let [poly (deriv-inputs-poly x)]
+  ;   (doseq [y (range (count poly))]
+  ;     (deriv-error-function argmap individual [(poly y)] [((deriv-outputs-poly x) y)])
+  ;     ))
+  ;   )
+  ; )
 
 
 (defn regression-error-function
