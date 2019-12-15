@@ -568,6 +568,8 @@
    [[1 0]]
    [[1 1]]
    [[1 2]]
+   [[2 2]]
+   [[3 3]]
    [[3 5]]
    [[1 1][1 2]]
    [[1 0][1 1][1 2]]
@@ -579,6 +581,8 @@
    [[0 -1]]
    [[1 0]]
    [[2 1]]
+   [[4 1]]
+   [[9 2]]
    [[15 4]]
    [[1 0][2 1]]
    [[0 -1][1 0][2 1]]
@@ -586,22 +590,32 @@
 
   )
 
+(def deriv-outputs
+  (for [x (range (count deriv-inputs-poly))]
+    (vec
+     (for [y (range (count (deriv-inputs-poly x)))]
+       (term-deriv deriv-inputs-poly)
+       )
+     )
+    ))
+
 
 ;single term
 (defn deriv-error-function
-  ([argmap individual] (deriv-error-function argmap individual deriv-inputs (map term-deriv deriv-inputs)))
-  ([argmap individual in out]
+  ([argmap individual] (deriv-error-function argmap individual deriv-inputs (map term-deriv deriv-inputs)(map (fn [input]
+                 (peek-stack
+                  (interpret-program
+                   (push-from-plushy (:plushy individual))
+                   (assoc empty-push-state :input {:in1 input})
+                   (:step-limit argmap))
+                  :term))
+               deriv-inputs)))
+  ([argmap individual in out outputs]
+
   (let [program (push-from-plushy (:plushy individual))
         inputs in
         correct-outputs out
-        outputs (map (fn [input]
-                       (peek-stack
-                        (interpret-program
-                         program
-                         (assoc empty-push-state :input {:in1 input})
-                         (:step-limit argmap))
-                        :term))
-                     inputs)
+        outputs outputs
         errors1 (map (fn [correct-output output]
                             (if (= output :no-stack-item)
                               1000000
@@ -634,26 +648,60 @@
         errors (concat errors1 errors2)
 
         ]
+
     (assoc individual
-           :behaviors outputs
-           :errors errors
-           :total-error (apply +' errors)))))
+           :behaviors (concat (individual :behaviors) outputs)
+           :errors (concat (individual :errors) errors)
+           :total-error (+' (apply +' errors )
+                           (if (nil? (individual :total-error))
+                             0
+                             (individual :total-error)
+                             )
+                           )))))
 
 ;program to solve with a single term
 ;(integer_+ in1 1 1 1 term_pop term_pop 1 int_to_term integer_- 1 integer_% integer_+ integer_- 0 integer_+ term_pop int_to_term 1 in1 integer_% integer_+ term_pop int_to_term term_pop term_pop integer_% integer_% int_to_term in1 in1 in1 integer_% exec_dup (in1) integer_* integer_+ integer_* integer_- int_to_term term_pop integer_* int_to_term integer_* 1 term_pop int_to_term integer_+ integer_+)
 ;77 generations, 200 population, lexicase selection
 
-; (defn poly-error-function
-;   [argmap individual]
-;
-;   (reduce
-;    #(reduce
-;      (fn [in1 in2]
-;        (deriv-error-function argmap in1 (deriv-inputs-poly in2) (deriv-outputs-poly in2)))
-;      %1 (range (count (deriv-inputs-poly %2))))
-;    individual (range (count deriv-inputs-poly))
-;    )
 
+(defn polyout
+  [argmap individual input]
+                 (peek-stack
+                  (interpret-program
+                   (push-from-plushy (:plushy individual))
+                   (assoc empty-push-state :input {:in1 input})
+                   (:step-limit argmap))
+                  :poly)
+  )
+
+(defn poly-error-function
+  [argmap individual]
+
+  ; (reduce
+  ;  #(reduce
+  ;    (fn [in1 in2]
+  ;      (println (deriv-inputs-poly %2))
+  ;      (deriv-error-function argmap in1 (get (deriv-inputs-poly %2) in2) (get (deriv-outputs-poly %2) in2)
+  ;      ))
+  ;
+  ;    %1 (range (count (deriv-inputs-poly %2))))
+  ;  individual (range (count deriv-inputs-poly))
+  ;  )
+
+  (reduce #(deriv-error-function argmap %1
+                                 (conj '()(get-in deriv-inputs-poly %2))
+                                 (conj '()(get-in deriv-outputs-poly %2))
+                                 (conj '()
+                                       (if (= :no-stack-item (polyout argmap individual (get deriv-inputs-poly (%2 0))))
+                                         :no-stack-item
+                                         (get (polyout argmap individual (get deriv-inputs-poly (%2 0)))(%2 1))
+                                         )
+                                       )
+                                 )
+          individual
+          (for [x (range (count deriv-inputs-poly)) y (range (count (deriv-inputs-poly x)))] [x y])
+
+          )
 
 
   ; (range (count deriv-inputs-poly))
@@ -666,7 +714,12 @@
   ;     (deriv-error-function argmap individual [(poly y)] [((deriv-outputs-poly x) y)])
   ;     ))
   ;   )
-  ; )
+  )
+
+;; Solution for poly
+;; Actually not. We did some stuff wrong, so it doesn't work right.
+;; (in1 int_to_term integer_- integer_* term_pop integer_* integer_* 1 integer_% int_to_term int_to_term in1 term_pop in1 1 term_add_to_poly int_to_term poly_pop 1 integer_- int_to_term poly_pop poly_pop integer_+)
+
 
 
 (defn regression-error-function
@@ -730,7 +783,7 @@
   [& args]
   (binding [*ns* (the-ns 'propel.core)]
     (propel-gp (update-in (merge {:instructions term-instructions
-                                  :error-function deriv-error-function
+                                  :error-function poly-error-function
                                   :max-generations 500
                                   :population-size 200
                                   :max-initial-plushy-size 50
