@@ -1,46 +1,26 @@
-# propel
+# The Problem
 
-Lee Spector's Plushy fork of Tom Helmuth's little PushGP implementation in Clojure.
+Evolving a program to solve a derivative. Specifically by applying the power rule.
 
-## Usage
+## Explanation
 
-To run PushGP on the default genetic programming problem from a REPL, load propel.core into your REPL (i.e. `lein repl`), and run `(-main)`.
+To start with, we chose this problem because it was an interesting area to work with evolution.  There is also the ability to add complexity as necessary to the problem or simplify it to generate results.  We did not get to tackling solving a derivative given as a string, but that was a future goal.  At the moment we settled on solving a single term derivative with a specific term stack.  Then we proceeded to work with polynomials using the same term stack structure.  This was less successful as we believe our error function is working incorrectly.
 
-To run PushGP on the default genetic programming problem from command line, execute `lein run`. Command-line arguments may be provided to override the defaults specified in `-main`, for example, `lein run :population-size 100`. You can use something like `lein run | tee outfile` to send output both to the terminal and to `outfile`.
+## Problem Setup
 
-## Description
+Our problem requires a term to be looked at, this consists of an x, one (1) coefficient and one (1) exponent.  As the x is only relevant when writing the term out and not explicitly necessary for taking the derivative we have chosen to ignore it in these circumstances.  This is the basis of how we set up the evolution.  From this set of contingencies, we created a new stack for the program to work with.  It's simply called the term stack.  The term stack is a vector consisting of two numbers, the first to be the coefficient, and the second to be the exponent.  There are only two ways to interact with this stack at the moment being to put the two numbers onto the integer stack or to put the top two numbers into a term and place it on the term stack.
 
-Propel is a minimalist implementation of the Push programming language and the PushGP genetic programming system in Clojure.
+Besides the term stack we allowed the program to have access to all basic integer functions as well as exec dupe and integers 1 and 0.
 
-For more information on Push and PushGP see [http://pushlanguage.org](http://pushlanguage.org).
+Our error function was setup in a way to penalize an incorrect coefficient stronger than an incorrect exponent as the coefficient requires multiplication of two values which has the possibilty to result in a wide variety of coefficient.  This is done by seeing if the coefficient is a multiple of either the starting coefficient or 1 of the starting exponent.  If it is not a flat penalty is given along with a general distance from correct value deduction.  In contrast, the exponent only needs to be subtracted to get the right value and as such we judge the distance alone.  Our intention is to try and give the program the information is needs to know that it is required to multiply one value, but only subtract with the other.
 
-Propel was developed largely as a teaching tool, with the goal of conveying the core concepts of Push and PushGP as clearly and concisely as possible.
+## Results
 
-As of this writing, only a few data types and instructions are provided, but the intention is for these to serve as models for additions.
+Our results of 10 test runs can be found in the single-term folder of this repository.  There were 10 successful attempts at evolving a solution.  The solutions themselves were not always efficient and that is due to some extraneous division and addition functions being used by the program.  We debated over including them or excluding them and decided we would let it have access to all basic operations, as stated prior.  We ran these tests with a population size of 200.
 
-All of the code is in [src/propel/core.clj](https://github.com/lspector/propel/blob/master/src/propel/core.clj), while a [Gorilla REPL](http://gorilla-repl.org) worksheet showing a few examples (to which you can add in your copy) is in [worksheet.clj](https://github.com/lspector/propel/blob/master/worksheet.clj). You can view the repository's version of the worksheet, formatted (read-only), [here](http://viewer.gorilla-repl.org/view.html?source=github&user=lspector&repo=propel&path=worksheet.clj).
+## Changes or Alterations
 
-### The Plushy Part
-
-In a genetic programming system, programs are randomly varied and recombined, with the goal of finding a program that serves a specified purpose. 
-
-In what form should the programs be represented for the sake of random variation and recombination? 
-
-Push programs are parenthesized lists of instructions and values, which can include sub-programs in sub-lists.
-
-In early versions of PushGP, Push programs were varied and recombined in their "natural" form, as possibly-nested lists of instructions and values that could be added, deleted, and replaced at any level of nesting.
-
-Later, however, linear (un-nested) representations of Push programs were developed, which:
-
-- Provide better support for *uniform* variation operators (in which each program component has an equal likelihood of being affected).
-
-- Increase the likelihood that programs will be nested where nesting matters, to form code blocks that are executed conditionally or repeatedly.
-
-When these linear representations are used, they are translated into ordinary, possibly-nested Push programs prior to execution. The placement of opening parentheses is determined implicitly, by the positions of instructions that make use of nested code blocks. The placement of closing parentheses is indicated explicitly, as part of the linear representation.
-
-In the [Plush](https://push-language.hampshire.edu/t/plush-genomes/279) representation that is used in [Clojush](https://github.com/lspector/Clojush) and [PyshGP](https://github.com/erp12/pyshgp), markers are attached to instructions to indicate how many closing parentheses should be inserted after that instruction is translated.
-
-Here, we instead use the "Plushy" representation, in which we allow `close` instructions to be included in the linear sequences of instructions. These are converted into closing parentheses during translation to Push programs.
-
-
-
+We had a pretty solid idea of how we wanted to set up our program coming into the problem and as such there was not much alteration to the method of doing things.  The only significant changes we made were to increase efficiency one of which we eventually reverted.
+The first was to remove extraneous integer operations.  This greatly increased the ability for the program to solve the given test cases and we felt it would be more interesting to see how it worked with all of them given.  
+The second major change involved the way we created our test case.  It was initially a loop that each generation would need to recreate and we realized this was extremely inefficient and did the loop once beforehand and then supplied the values and the correct values which didn't overall affect the accuracy, but increased the speed that it can run each generation.
+The other major change that stuck was to separate the error values of the coefficient and the exponent.  This helped with the ability for the program to generate a solution.  We did this in an attempt to better separate the needed functions to get the correct value for the coefficient and the exponent independently.  
