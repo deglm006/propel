@@ -4,7 +4,7 @@ Evolving a program to solve a derivative. Specifically by applying the power rul
 
 ## Explanation
 
-To start with, we chose this problem because it was an interesting area to work with evolution.  There is also the ability to add complexity as necessary to the problem or simplify it to generate results.  We did not get to tackling solving a derivative given as a string, but that was a future goal.  At the moment we settled on solving a single term derivative with a specific term stack.  Then we proceeded to work with polynomials using the same term stack structure.  This was less successful as we believe our error function is working incorrectly.
+To start with, we chose this problem because it was an interesting area to work with evolution.  There is also the ability to add complexity as necessary to the problem or simplify it to generate results.  We did not get to tackling solving a derivative given as a string, but that was a future goal.  At the moment we settled on solving a single term derivative with a specific term stack.  Then we proceeded to work with polynomials using the same term stack structure.  This was less successful as we believe our error function is working incorrectly. Also, extending the problem to polynomials in general significantly increases the complexity of the problem, so even if it is theoretically able to be solved with the given setup in practice it might be somewhat infeasible in practice. We didn't give it any looping to work with, and while it shouldn't be technically necessary to have to solve the problem with polynomials of at most a given degree, it could probably make doing so easier.
 
 ## Problem Setup
 
@@ -12,7 +12,7 @@ Our problem requires a term to be looked at, this consists of an x, one (1) coef
 
 Besides the term stack we allowed the program to have access to all basic integer functions as well as exec dupe and integers 1 and 0.
 
-Our error function was setup in a way to penalize an incorrect coefficient stronger than an incorrect exponent as the coefficient requires multiplication of two values which has the possibilty to result in a wide variety of coefficient.  This is done by seeing if the coefficient is a multiple of either the starting coefficient or 1 of the starting exponent.  If it is not a flat penalty is given along with a general distance from correct value deduction.  In contrast, the exponent only needs to be subtracted to get the right value and as such we judge the distance alone.  Our intention is to try and give the program the information is needs to know that it is required to multiply one value, but only subtract with the other.
+Our error function was setup in a way to penalize an incorrect coefficient stronger than an incorrect exponent as the coefficient requires multiplication of two values which has the possibility to result in a wide variety of coefficient.  This is done by seeing if the coefficient is a multiple of either the starting coefficient or 1 of the starting exponent.  If it is not a flat penalty is given along with a general distance from correct value deduction.  In contrast, the exponent only needs to be subtracted to get the right value and as such we judge the distance alone.  Our intention is to try and give the program the information is needs to know that it is required to multiply one value, but only subtract with the other.
 
 ## Results
 
