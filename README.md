@@ -4,7 +4,11 @@ Evolving a program to solve a derivative. Specifically by applying the power rul
 
 ## Explanation
 
-To start with, we chose this problem because it was an interesting area to work with evolution.  There is also the ability to add complexity as necessary to the problem or simplify it to generate results.  We did not get to tackling solving a derivative given as a string, but that was a future goal.  At the moment we settled on solving a single term derivative with a specific term stack.  Then we proceeded to work with polynomials using the same term stack structure.  This was less successful as we believe our error function is working incorrectly. Also, extending the problem to polynomials in general significantly increases the complexity of the problem, so even if it is theoretically able to be solved with the given setup in practice it might be somewhat infeasible in practice. We didn't give it any looping to work with, and while it shouldn't be technically necessary to have to solve the problem with polynomials of at most a given degree, it could probably make doing so easier.
+To start with, we chose this problem because it was an interesting area to work with evolution.  There is also the ability to add complexity as necessary to the problem or simplify it to generate results.  We did not get to tackling solving a derivative given as a string, but that was a future goal.  At the moment we settled on solving a single term derivative with a specific term stack.  Then we proceeded to work with polynomials using the same term stack structure.  This was less successful as we believe our error function is working incorrectly.
+
+Also, extending the problem to polynomials in general significantly increases the complexity of the problem, so even if it is theoretically able to be solved with the given setup in practice it might be somewhat infeasible in practice. We didn't give it any looping to work with, and while it shouldn't be technically necessary to have to solve the problem with polynomials of at most a given degree, it could probably make doing so easier. We also hand built the test cases for polynomials instead of generating them with a loop so we have a much smaller set of cases to work with, which could hinder the ability of evolution to find a solution.
+
+We ran a handful of test runs to try to solve the problem with polynomials, but in every case we just received the same polynomial back.
 
 ## Problem Setup
 
